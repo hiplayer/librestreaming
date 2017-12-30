@@ -28,6 +28,7 @@ import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.RESCoreParameters;
 import me.lake.librestreaming.model.RESVideoBuff;
 import me.lake.librestreaming.model.Size;
+import me.lake.librestreaming.muxer.RESMediaDataMuxer;
 import me.lake.librestreaming.render.GLESRender;
 import me.lake.librestreaming.render.IRender;
 import me.lake.librestreaming.render.NativeRender;
@@ -143,7 +144,7 @@ public class RESSoftVideoCore implements RESVideoCore {
     }
 
     @Override
-    public boolean startStreaming(RESFlvDataCollecter flvDataCollecter) {
+    public boolean startStreaming(RESMediaDataMuxer mediaMuxer) {
         synchronized (syncOp) {
             try {
                 synchronized (syncDstVideoEncoder) {
@@ -154,7 +155,7 @@ public class RESSoftVideoCore implements RESVideoCore {
                     dstVideoEncoder.start();
                     isEncoderStarted = true;
                 }
-                videoSenderThread = new VideoSenderThread("VideoSenderThread", dstVideoEncoder, flvDataCollecter);
+                videoSenderThread = new VideoSenderThread("VideoSenderThread", dstVideoEncoder, mediaMuxer);
                 videoSenderThread.start();
                 synchronized (syncIsLooping) {
                     if (!isPreviewing && !isStreaming) {

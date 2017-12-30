@@ -36,6 +36,7 @@ import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.RESCoreParameters;
 import me.lake.librestreaming.model.ScreenGLWapper;
 import me.lake.librestreaming.model.Size;
+import me.lake.librestreaming.muxer.RESMediaDataMuxer;
 import me.lake.librestreaming.rtmp.RESFlvDataCollecter;
 import me.lake.librestreaming.tools.LogTools;
 
@@ -84,7 +85,7 @@ public class RESHardVideoCore implements RESVideoCore {
             resCoreParameters.mediacodecAVCFrameRate = resCoreParameters.videoFPS;
             loopingInterval = 1000 / resCoreParameters.videoFPS;
             dstVideoFormat = new MediaFormat();
-            videoGLHandlerThread = new HandlerThread("GLThread");
+            videoGLHandlerThread = new HandlerThread("videoGLThread");
             videoGLHandlerThread.start();
             videoGLHander = new VideoGLHandler(videoGLHandlerThread.getLooper());
             videoGLHander.sendEmptyMessage(VideoGLHandler.WHAT_INIT);
@@ -127,9 +128,9 @@ public class RESHardVideoCore implements RESVideoCore {
     }
 
     @Override
-    public boolean startStreaming(RESFlvDataCollecter flvDataCollecter) {
+    public boolean startStreaming(RESMediaDataMuxer muxer) {
         synchronized (syncOp) {
-            videoGLHander.sendMessage(videoGLHander.obtainMessage(VideoGLHandler.WHAT_START_STREAMING, flvDataCollecter));
+            videoGLHander.sendMessage(videoGLHander.obtainMessage(VideoGLHandler.WHAT_START_STREAMING, muxer));
             synchronized (syncIsLooping) {
                 if (!isPreviewing && !isStreaming) {
                     videoGLHander.removeMessages(VideoGLHandler.WHAT_DRAW);
@@ -407,7 +408,7 @@ public class RESHardVideoCore implements RESVideoCore {
                     dstVideoEncoder.configure(dstVideoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
                     initMediaCodecGL(dstVideoEncoder.createInputSurface());
                     dstVideoEncoder.start();
-                    videoSenderThread = new VideoSenderThread("VideoSenderThread", dstVideoEncoder, (RESFlvDataCollecter) msg.obj);
+                    videoSenderThread = new VideoSenderThread("VideoSenderThread", dstVideoEncoder, (RESMediaDataMuxer) msg.obj);
                     videoSenderThread.start();
                 }
                 break;
@@ -482,7 +483,7 @@ public class RESHardVideoCore implements RESVideoCore {
             GLES20.glUniformMatrix4fv(offScreenGLWapper.cam2dTextureMatrix, 1, false, textureMatrix, 0);
             GLES20.glViewport(0, 0, resCoreParameters.videoWidth, resCoreParameters.videoHeight);
             doGLDraw();
-            GLES20.glFinish();
+            //GLES20.glFinish();
             GLHelper.disableVertex(offScreenGLWapper.cam2dPostionLoc, offScreenGLWapper.cam2dTextureCoordLoc);
             GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0);
             GLES20.glUseProgram(0);
@@ -548,7 +549,7 @@ public class RESHardVideoCore implements RESVideoCore {
                 GLHelper.enableVertex(mediaCodecGLWapper.drawPostionLoc, mediaCodecGLWapper.drawTextureCoordLoc,
                         shapeVerticesBuffer, mediaCodecTextureVerticesBuffer);
                 doGLDraw();
-                GLES20.glFinish();
+                //GLES20.glFinish();
                 GLHelper.disableVertex(mediaCodecGLWapper.drawPostionLoc, mediaCodecGLWapper.drawTextureCoordLoc);
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
                 GLES20.glUseProgram(0);
@@ -570,7 +571,7 @@ public class RESHardVideoCore implements RESVideoCore {
                         shapeVerticesBuffer, screenTextureVerticesBuffer);
                 GLES20.glViewport(0, 0, screenSize.getWidth(), screenSize.getHeight());
                 doGLDraw();
-                GLES20.glFinish();
+                //GLES20.glFinish();
                 GLHelper.disableVertex(screenGLWapper.drawPostionLoc, screenGLWapper.drawTextureCoordLoc);
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
                 GLES20.glUseProgram(0);

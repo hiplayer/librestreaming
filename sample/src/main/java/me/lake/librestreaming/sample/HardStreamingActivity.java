@@ -39,6 +39,7 @@ import me.lake.librestreaming.sample.hardfilter.GaussianBlurHardFilter;
 import me.lake.librestreaming.sample.hardfilter.IconHardFilter;
 import me.lake.librestreaming.sample.hardfilter.SeaScapeFilter;
 import me.lake.librestreaming.sample.hardfilter.SkinBlurHardVideoFilter;
+import me.lake.librestreaming.sample.hardfilter.BeautyFaceHardVideoFilter;
 import me.lake.librestreaming.sample.hardfilter.SobelEdgeDetectionHardVideoFilter;
 import me.lake.librestreaming.sample.hardfilter.TextHardFilter;
 import me.lake.librestreaming.sample.hardfilter.TimeStampHardFilter;
@@ -67,6 +68,8 @@ public class HardStreamingActivity extends BaseStreamingActivity {
         filterItems.add(new FilterItem("ViewRending", new ViewHardFilter(new FakeView(this))));
         filterItems.add(new FilterItem("FishEye", new FishEyeFilterHard()));
         filterItems.add(new FilterItem("SkinBlur", new SkinBlurHardVideoFilter(2)));
+
+        filterItems.add(new FilterItem("BeautyFace",new BeautyFaceHardVideoFilter(getApplicationContext(), 2)));
         filterItems.add(new FilterItem("Whitening", new WhiteningHardVideoFilter()));
         filterItems.add(new FilterItem("ColorMix", new ColorMixHardFilter(0.98f, 0.72f, 0.82f, 0.3f)));
         LinkedList<BaseHardVideoFilter> filters = new LinkedList<>();

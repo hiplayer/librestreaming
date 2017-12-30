@@ -8,6 +8,7 @@ import me.lake.librestreaming.core.RESSoftAudioCore;
 import me.lake.librestreaming.filter.softaudiofilter.BaseSoftAudioFilter;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.RESCoreParameters;
+import me.lake.librestreaming.muxer.RESMediaDataMuxer;
 import me.lake.librestreaming.rtmp.RESFlvDataCollecter;
 import me.lake.librestreaming.tools.LogTools;
 
@@ -45,9 +46,9 @@ public class RESAudioClient {
         }
     }
 
-    public boolean start(RESFlvDataCollecter flvDataCollecter) {
+    public boolean start(RESMediaDataMuxer dataMuxer) {
         synchronized (syncOp) {
-            softAudioCore.start(flvDataCollecter);
+            softAudioCore.start(dataMuxer);
             audioRecord.startRecording();
             audioRecordThread = new AudioRecordThread();
             audioRecordThread.start();

@@ -19,6 +19,7 @@ import me.lake.librestreaming.filter.softaudiofilter.BaseSoftAudioFilter;
 import me.lake.librestreaming.model.RESAudioBuff;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.RESCoreParameters;
+import me.lake.librestreaming.muxer.RESMediaDataMuxer;
 import me.lake.librestreaming.rtmp.RESFlvDataCollecter;
 import me.lake.librestreaming.tools.LogTools;
 
@@ -90,7 +91,7 @@ public class RESSoftAudioCore {
         }
     }
 
-    public void start(RESFlvDataCollecter flvDataCollecter) {
+    public void start(RESMediaDataMuxer dataMuxer) {
         synchronized (syncOp) {
             try {
                 for (RESAudioBuff buff : orignAudioBuffs) {
@@ -103,7 +104,7 @@ public class RESSoftAudioCore {
                 dstAudioEncoder.start();
                 lastAudioQueueBuffIndex = 0;
                 audioFilterHandlerThread = new HandlerThread("audioFilterHandlerThread");
-                audioSenderThread = new AudioSenderThread("AudioSenderThread", dstAudioEncoder, flvDataCollecter);
+                audioSenderThread = new AudioSenderThread("AudioSenderThread", dstAudioEncoder, dataMuxer);
                 audioFilterHandlerThread.start();
                 audioSenderThread.start();
                 audioFilterHandler = new AudioFilterHandler(audioFilterHandlerThread.getLooper());

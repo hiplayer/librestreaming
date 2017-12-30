@@ -14,9 +14,10 @@ import me.lake.librestreaming.filter.softvideofilter.BaseSoftVideoFilter;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.RESCoreParameters;
 import me.lake.librestreaming.model.Size;
-import me.lake.librestreaming.rtmp.RESFlvData;
-import me.lake.librestreaming.rtmp.RESFlvDataCollecter;
-import me.lake.librestreaming.rtmp.RESRtmpSender;
+import me.lake.librestreaming.muxer.RESMediaDataMuxer;
+import me.lake.librestreaming.muxer.RESMediaDataProcessor;
+import me.lake.librestreaming.muxer.RESMediaDataSender;
+import me.lake.librestreaming.rtmp.RESRtmpProcessor;
 import me.lake.librestreaming.tools.LogTools;
 
 /**
@@ -28,8 +29,9 @@ public class RESClient {
     private final Object SyncOp;
     //parameters
     RESCoreParameters coreParameters;
-    private RESRtmpSender rtmpSender;
-    private RESFlvDataCollecter dataCollecter;
+    private RESMediaDataProcessor dataProcessor;
+    private RESMediaDataSender dataSender;
+    private RESMediaDataMuxer dataMuxer;
 
     public RESClient() {
         SyncOp = new Object();
@@ -47,7 +49,8 @@ public class RESClient {
         synchronized (SyncOp) {
             checkDirection(resConfig);
             coreParameters.filterMode = resConfig.getFilterMode();
-            coreParameters.rtmpAddr = resConfig.getRtmpAddr();
+            coreParameters.senderMode = resConfig.getSenderMode();
+            coreParameters.senderAddr = resConfig.getSenderAddr();
             coreParameters.printDetailMsg = resConfig.isPrintDetailMsg();
             coreParameters.senderQueueLength = 150;
             videoClient = new RESVideoClient(coreParameters);
@@ -62,14 +65,17 @@ public class RESClient {
                 LogTools.d(coreParameters.toString());
                 return false;
             }
-            rtmpSender = new RESRtmpSender();
-            rtmpSender.prepare(coreParameters);
-            dataCollecter = new RESFlvDataCollecter() {
-                @Override
-                public void collect(RESFlvData flvData, int type) {
-                    rtmpSender.feed(flvData, type);
-                }
-            };
+            switch (coreParameters.senderMode) {
+                case RESCoreParameters.SENDER_MODE_RTMP:
+                    dataProcessor = new RESRtmpProcessor();
+                    break;
+                case RESCoreParameters.SENDER_MOED_MPEG4:
+                    dataProcessor = null;
+                    break;
+            }
+            dataProcessor.prepare(coreParameters);
+            dataSender = dataProcessor.getSender();
+            dataMuxer = dataProcessor.getMuxer();
             coreParameters.done = true;
             LogTools.d("===INFO===coreParametersReady:");
             LogTools.d(coreParameters.toString());
@@ -83,9 +89,9 @@ public class RESClient {
      */
     public void startStreaming() {
         synchronized (SyncOp) {
-            videoClient.startStreaming(dataCollecter);
-            rtmpSender.start(coreParameters.rtmpAddr);
-            audioClient.start(dataCollecter);
+            dataSender.start(coreParameters.senderAddr);
+            videoClient.startStreaming(dataMuxer);
+            audioClient.start(dataMuxer);
             LogTools.d("RESClient,startStreaming()");
         }
     }
@@ -95,9 +101,9 @@ public class RESClient {
      */
     public void stopStreaming() {
         synchronized (SyncOp) {
-            videoClient.stopStreaming();
             audioClient.stop();
-            rtmpSender.stop();
+            videoClient.stopStreaming();
+            dataSender.stop();
             LogTools.d("RESClient,stopStreaming()");
         }
     }
@@ -107,10 +113,10 @@ public class RESClient {
      */
     public void destroy() {
         synchronized (SyncOp) {
-            rtmpSender.destroy();
+            dataSender.destroy();
             videoClient.destroy();
             audioClient.destroy();
-            rtmpSender = null;
+            dataSender = null;
             videoClient = null;
             audioClient = null;
             LogTools.d("RESClient,destroy()");
@@ -187,7 +193,7 @@ public class RESClient {
      */
     public String getServerIpAddr() {
         synchronized (SyncOp) {
-            return rtmpSender == null ? null : rtmpSender.getServerIpAddr();
+            return dataSender == null ? null : dataSender.getServerIpAddr();
         }
     }
 
@@ -209,7 +215,7 @@ public class RESClient {
      */
     public float getSendFrameRate() {
         synchronized (SyncOp) {
-            return rtmpSender == null ? 0 : rtmpSender.getSendFrameRate();
+            return dataSender == null ? 0 : dataSender.getSendFrameRate();
         }
     }
 
@@ -220,7 +226,7 @@ public class RESClient {
      */
     public float getSendBufferFreePercent() {
         synchronized (SyncOp) {
-            return rtmpSender == null ? 0 : rtmpSender.getSendBufferFreePercent();
+            return dataSender == null ? 0 : dataSender.getSendBufferFreePercent();
         }
     }
 
@@ -304,7 +310,7 @@ public class RESClient {
      */
     public int getAVSpeed() {
         synchronized (SyncOp) {
-            return rtmpSender == null ? 0 : rtmpSender.getTotalSpeed();
+            return dataSender == null ? 0 : dataSender.getTotalSpeed();
         }
     }
 
@@ -314,7 +320,7 @@ public class RESClient {
      * @param connectionListener
      */
     public void setConnectionListener(RESConnectionListener connectionListener) {
-        rtmpSender.setConnectionListener(connectionListener);
+        dataSender.setConnectionListener(connectionListener);
     }
 
     /**

@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         et_url = (EditText) findViewById(R.id.et_url);
+        et_url.setText("rtmp://livepush.test.pajk.cn/live/rtmpStream");
         rg_direction = (RadioGroup) findViewById(R.id.rg_direction);
         rg_mode = (RadioGroup) findViewById(R.id.rg_mode);
         rg_direction.check(R.id.rb_port);

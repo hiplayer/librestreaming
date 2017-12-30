@@ -7,6 +7,7 @@ import me.lake.librestreaming.core.listener.RESVideoChangeListener;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.RESCoreParameters;
 import me.lake.librestreaming.model.Size;
+import me.lake.librestreaming.muxer.RESMediaDataMuxer;
 import me.lake.librestreaming.rtmp.RESFlvDataCollecter;
 
 /**
@@ -24,7 +25,7 @@ public interface RESVideoCore {
 
     void stopPreview(boolean releaseTexture);
 
-    boolean startStreaming(RESFlvDataCollecter flvDataCollecter);
+    boolean startStreaming(RESMediaDataMuxer muxer);
 
     boolean stopStreaming();
 

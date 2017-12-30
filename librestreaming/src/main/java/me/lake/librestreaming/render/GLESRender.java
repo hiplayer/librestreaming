@@ -198,7 +198,7 @@ public class GLESRender implements IRender {
             }
             //=================================
             GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawIndices.length, GLES20.GL_UNSIGNED_SHORT, mDrawIndicesBuffer);
-            GLES20.glFinish();
+            //GLES20.glFinish();
         }
 
         private void initGLES() {

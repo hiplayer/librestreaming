@@ -14,6 +14,9 @@ public class RESCoreParameters {
 
     public static final int RENDERING_MODE_NATIVE_WINDOW = 1;
     public static final int RENDERING_MODE_OPENGLES = 2;
+
+    public static final int SENDER_MODE_RTMP = 1;
+    public static final int SENDER_MOED_MPEG4 = 2;
     /**
      * same with jni
      */
@@ -28,7 +31,8 @@ public class RESCoreParameters {
     public boolean printDetailMsg;
     public int filterMode;
     public int renderingMode;
-    public String rtmpAddr;
+    public int senderMode;
+    public String senderAddr;
     public int frontCameraDirectionMode;
     public int backCameraDirectionMode;
     public boolean isPortrait;

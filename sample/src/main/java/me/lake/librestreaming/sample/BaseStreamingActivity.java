@@ -32,6 +32,7 @@ import me.lake.librestreaming.core.listener.RESVideoChangeListener;
 import me.lake.librestreaming.filter.softaudiofilter.BaseSoftAudioFilter;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.Size;
+import me.lake.librestreaming.rtmp.RESRtmpProcessor;
 import me.lake.librestreaming.sample.audiofilter.SetVolumeAudioFilter;
 import me.lake.librestreaming.sample.ui.AspectTextureView;
 
@@ -85,7 +86,7 @@ public class BaseStreamingActivity extends AppCompatActivity implements RESConne
         resConfig.setFilterMode(filtermode);
         resConfig.setTargetVideoSize(new Size(720, 480));
         resConfig.setBitRate(750 * 1024);
-        resConfig.setVideoFPS(20);
+        resConfig.setVideoFPS(30);
         resConfig.setVideoGOP(1);
         resConfig.setRenderingMode(RESConfig.RenderingMode.OpenGLES);
         resConfig.setDefaultCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
@@ -102,7 +103,8 @@ public class BaseStreamingActivity extends AppCompatActivity implements RESConne
             resConfig.setBackCameraDirectionMode((backDirection == 90 ? RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_0 : RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_180));
             resConfig.setFrontCameraDirectionMode((frontDirection == 90 ? RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_180 : RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_0) | RESConfig.DirectionMode.FLAG_DIRECTION_FLIP_HORIZONTAL);
         }
-        resConfig.setRtmpAddr(rtmpaddr);
+        resConfig.setSenderAddr(rtmpaddr);
+        resConfig.setSenderMode(RESConfig.SenderMode.RTMP);
         if (!resClient.prepare(resConfig)) {
             resClient = null;
             Log.e(TAG, "prepare,failed!!");

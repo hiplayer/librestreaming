@@ -26,11 +26,17 @@ public class RESConfig {
         public static final int FLAG_DIRECTION_ROATATION_270 = RESCoreParameters.FLAG_DIRECTION_ROATATION_270;
     }
 
+    public static class SenderMode {
+        public static final int RTMP = RESCoreParameters.SENDER_MODE_RTMP;
+        public static final int MPEG4 = RESCoreParameters.SENDER_MOED_MPEG4;
+    }
+
     private int filterMode;
     private Size targetVideoSize;
     private int videoBufferQueueNum;
     private int bitRate;
-    private String rtmpAddr;
+    private int senderMode;
+    private String senderAddr;
     private int renderingMode;
     private int defaultCamera;
     private int frontCameraDirectionMode;
@@ -44,6 +50,7 @@ public class RESConfig {
 
     public static RESConfig obtain() {
         RESConfig res = new RESConfig();
+        res.setSenderMode(SenderMode.RTMP);
         res.setFilterMode(FilterMode.SOFT);
         res.setRenderingMode(RenderingMode.NativeWindow);
         res.setTargetVideoSize(new Size(1280, 720));
@@ -180,12 +187,18 @@ public class RESConfig {
         return renderingMode;
     }
 
-    public String getRtmpAddr() {
-        return rtmpAddr;
+    public void setSenderMode(int mode) {
+        this.senderMode = mode;
+    }
+    public int getSenderMode() {
+        return senderMode;
+    }
+    public String getSenderAddr() {
+        return senderAddr;
     }
 
-    public void setRtmpAddr(String rtmpAddr) {
-        this.rtmpAddr = rtmpAddr;
+    public void setSenderAddr(String senderAddr) {
+        this.senderAddr = senderAddr;
     }
 
     public boolean isPrintDetailMsg() {

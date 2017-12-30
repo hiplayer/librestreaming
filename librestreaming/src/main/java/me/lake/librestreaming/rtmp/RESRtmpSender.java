@@ -10,12 +10,13 @@ import me.lake.librestreaming.core.RESByteSpeedometer;
 import me.lake.librestreaming.core.RESFrameRateMeter;
 import me.lake.librestreaming.core.listener.RESConnectionListener;
 import me.lake.librestreaming.model.RESCoreParameters;
+import me.lake.librestreaming.muxer.RESMediaDataSender;
 import me.lake.librestreaming.tools.LogTools;
 
 /**
  * Created by lake on 16-4-8.
  */
-public class RESRtmpSender {
+public class RESRtmpSender implements RESMediaDataSender {
     private static final int TIMEGRANULARITY = 3000;
     public static final int FROM_AUDIO = 8;
     public static final int FROM_VIDEO = 6;

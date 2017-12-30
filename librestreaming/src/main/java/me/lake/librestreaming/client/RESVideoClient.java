@@ -17,6 +17,7 @@ import me.lake.librestreaming.filter.softvideofilter.BaseSoftVideoFilter;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.RESCoreParameters;
 import me.lake.librestreaming.model.Size;
+import me.lake.librestreaming.muxer.RESMediaDataMuxer;
 import me.lake.librestreaming.rtmp.RESFlvDataCollecter;
 import me.lake.librestreaming.tools.BuffSizeCalculator;
 import me.lake.librestreaming.tools.LogTools;
@@ -182,7 +183,7 @@ public class RESVideoClient {
         }
     }
 
-    public boolean startStreaming(RESFlvDataCollecter flvDataCollecter) {
+    public boolean startStreaming(RESMediaDataMuxer muxer) {
         synchronized (syncOp) {
             if (!isStreaming && !isPreviewing) {
                 if (!startVideo()) {
@@ -192,7 +193,7 @@ public class RESVideoClient {
                 }
                 videoCore.updateCamTexture(camTexture);
             }
-            videoCore.startStreaming(flvDataCollecter);
+            videoCore.startStreaming(muxer);
             isStreaming = true;
             return true;
         }
