@@ -14,6 +14,7 @@ import me.lake.librestreaming.filter.softvideofilter.BaseSoftVideoFilter;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.RESCoreParameters;
 import me.lake.librestreaming.model.Size;
+import me.lake.librestreaming.mpeg4.RESMpeg4Processor;
 import me.lake.librestreaming.muxer.RESMediaDataMuxer;
 import me.lake.librestreaming.muxer.RESMediaDataProcessor;
 import me.lake.librestreaming.muxer.RESMediaDataSender;
@@ -70,7 +71,7 @@ public class RESClient {
                     dataProcessor = new RESRtmpProcessor();
                     break;
                 case RESCoreParameters.SENDER_MOED_MPEG4:
-                    dataProcessor = null;
+                    dataProcessor = new RESMpeg4Processor();
                     break;
             }
             dataProcessor.prepare(coreParameters);

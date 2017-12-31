@@ -12,7 +12,9 @@ import me.lake.librestreaming.model.RESCoreParameters;
  */
 public interface RESMediaDataSender {
     void prepare(RESCoreParameters coreParameters);
-    void start(String rtmpAddr);
+    void start(String senderAddr);
+    void resume();
+    void pause();
     void stop();
     void destroy();
     int getTotalSpeed();

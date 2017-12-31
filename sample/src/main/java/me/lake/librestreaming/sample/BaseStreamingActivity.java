@@ -32,7 +32,6 @@ import me.lake.librestreaming.core.listener.RESVideoChangeListener;
 import me.lake.librestreaming.filter.softaudiofilter.BaseSoftAudioFilter;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.Size;
-import me.lake.librestreaming.rtmp.RESRtmpProcessor;
 import me.lake.librestreaming.sample.audiofilter.SetVolumeAudioFilter;
 import me.lake.librestreaming.sample.ui.AspectTextureView;
 
@@ -54,7 +53,7 @@ public class BaseStreamingActivity extends AppCompatActivity implements RESConne
     protected Handler mainHander;
     protected Button btn_toggle;
     protected boolean started;
-    protected String rtmpaddr = "rtmp://10.57.9.88/live/livestream";
+    protected String senderAddr = "rtmp://10.57.9.88/live/livestream";
     protected int filtermode = RESConfig.FilterMode.SOFT;
     RESConfig resConfig;
 
@@ -67,7 +66,7 @@ public class BaseStreamingActivity extends AppCompatActivity implements RESConne
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
         if (i.getStringExtra(RTMPADDR) != null && !i.getStringExtra(RTMPADDR).isEmpty()) {
-            rtmpaddr = i.getStringExtra(RTMPADDR);
+            senderAddr = i.getStringExtra(RTMPADDR);
         }
         started = false;
         super.onCreate(savedInstanceState);
@@ -103,8 +102,9 @@ public class BaseStreamingActivity extends AppCompatActivity implements RESConne
             resConfig.setBackCameraDirectionMode((backDirection == 90 ? RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_0 : RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_180));
             resConfig.setFrontCameraDirectionMode((frontDirection == 90 ? RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_180 : RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_0) | RESConfig.DirectionMode.FLAG_DIRECTION_FLIP_HORIZONTAL);
         }
-        resConfig.setSenderAddr(rtmpaddr);
-        resConfig.setSenderMode(RESConfig.SenderMode.RTMP);
+
+        resConfig.setSenderMode(RESConfig.SenderMode.MPEG4);
+        resConfig.setSenderAddr(senderAddr);
         if (!resClient.prepare(resConfig)) {
             resClient = null;
             Log.e(TAG, "prepare,failed!!");

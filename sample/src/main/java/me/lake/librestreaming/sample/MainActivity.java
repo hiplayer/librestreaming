@@ -12,6 +12,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import java.io.File;
+
+import static android.os.Environment.DIRECTORY_MOVIES;
+
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_STREAM = 1;
     private static String[] PERMISSIONS_STREAM = {
@@ -31,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         et_url = (EditText) findViewById(R.id.et_url);
         et_url.setText("rtmp://livepush.test.pajk.cn/live/rtmpStream");
+        File outputFile = new File(getExternalFilesDir(DIRECTORY_MOVIES), "camera-test.mp4");
+        et_url.setText(outputFile.toString());
         rg_direction = (RadioGroup) findViewById(R.id.rg_direction);
         rg_mode = (RadioGroup) findViewById(R.id.rg_mode);
         rg_direction.check(R.id.rb_port);
