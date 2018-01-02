@@ -144,7 +144,7 @@ public class RESMpeg4Writer extends RESMediaDataAbstractSender {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_START:
-                    if (state == STATE.IDLE) {
+                    if (state == STATE.IDLE || state == STATE.STOPPED) {
                         sendFrameRateMeter.reSet();
                         try {
                             mMuxer = new MediaMuxer((String) msg.obj, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
@@ -154,6 +154,8 @@ public class RESMpeg4Writer extends RESMediaDataAbstractSender {
                         state = STATE.PREPARING;
                         audioStartTime = -1;
                         videoStartTime = -1;
+                        audioTrackIndex = -1;
+                        videoTrackIndex = -1;
                     }
                     break;
                 case MSG_WRITE: {
@@ -214,9 +216,6 @@ public class RESMpeg4Writer extends RESMediaDataAbstractSender {
                     break;
                 }
                 case MSG_STOP:
-                    if (state != STATE.RUNNING) {
-                        break;
-                    }
                     state = STATE.STOPPED;
                     mMuxer.stop();
                     mMuxer.release();
