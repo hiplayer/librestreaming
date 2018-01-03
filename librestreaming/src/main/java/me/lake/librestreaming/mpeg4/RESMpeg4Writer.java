@@ -140,6 +140,9 @@ public class RESMpeg4Writer extends RESMediaDataAbstractSender {
 
         long audioStartTime = -1;
         long videoStartTime = -1;
+        long lastAudioPresentationTimeUs = -1;
+        long lastVideoPresentationTimeUs = -1;
+
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -156,6 +159,8 @@ public class RESMpeg4Writer extends RESMediaDataAbstractSender {
                         videoStartTime = -1;
                         audioTrackIndex = -1;
                         videoTrackIndex = -1;
+                        lastAudioPresentationTimeUs = -1;
+                        lastVideoPresentationTimeUs = -1;
                     }
                     break;
                 case MSG_WRITE: {
@@ -192,8 +197,17 @@ public class RESMpeg4Writer extends RESMediaDataAbstractSender {
                             case RESMpeg4Muxer.TYPE_AUDIO:
                                 if (audioStartTime < 0) {
                                     audioStartTime = data.bufferInfo.presentationTimeUs;
-                                }data.bufferInfo.presentationTimeUs -= audioStartTime;
-                                //LogTools.e("audio presentationTimeUs: " + data.bufferInfo.presentationTimeUs);
+                                }
+                            {
+                                long newTimeUs = data.bufferInfo.presentationTimeUs - audioStartTime;
+                                if (newTimeUs<lastAudioPresentationTimeUs + 250) {
+                                    newTimeUs = lastAudioPresentationTimeUs + 250;
+                                }
+                                data.bufferInfo.presentationTimeUs = newTimeUs;
+                                lastAudioPresentationTimeUs = newTimeUs;
+                            }
+
+                                LogTools.e("audio presentationTimeUs: " + data.bufferInfo.presentationTimeUs);
                                 mMuxer.writeSampleData(audioTrackIndex, data.encodedData, data.bufferInfo);
                                 audioByteSpeedometer.gain(data.bufferInfo.size);
                                 break;
@@ -202,8 +216,16 @@ public class RESMpeg4Writer extends RESMediaDataAbstractSender {
                                 if (videoStartTime < 0) {
                                     videoStartTime = data.bufferInfo.presentationTimeUs;
                                 }
-                                data.bufferInfo.presentationTimeUs -= videoStartTime;
-                                //LogTools.e("video presentationTimeUs: " + data.bufferInfo.presentationTimeUs);
+
+                            {
+                                long newTimeUs = data.bufferInfo.presentationTimeUs - videoStartTime;
+                                if (newTimeUs<lastVideoPresentationTimeUs + 250) {
+                                    newTimeUs = lastVideoPresentationTimeUs + 250;
+                                }
+                                data.bufferInfo.presentationTimeUs = newTimeUs;
+                                lastVideoPresentationTimeUs = newTimeUs;
+                            }
+                                LogTools.e("video presentationTimeUs: " + data.bufferInfo.presentationTimeUs);
                                 mMuxer.writeSampleData(videoTrackIndex, data.encodedData, data.bufferInfo);
                                 videoByteSpeedometer.gain(data.bufferInfo.size);
                                 sendFrameRateMeter.count();
