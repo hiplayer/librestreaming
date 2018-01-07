@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:buttonCir="http://schemas.android.com/tools">
+
+    <me.lake.librestreaming.sample.ui.AspectTextureView
+        android:id="@+id/texture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:padding="8dp" >
+
+        <ImageView
+            android:id="@+id/switch_camera"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="7dp"
+            android:src="@drawable/switch_camera"/>
+
+        <ImageView
+            android:id="@+id/beauty_filter"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/switch_camera"
+            android:layout_marginBottom="7dp"
+            android:src="@drawable/beauty_filter_on" />
+    </LinearLayout>
+
+    <me.lake.librestreaming.sample.ui.CircleButtonView
+        android:id="@+id/cbv"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        buttonCir:minTime="1"
+        buttonCir:maxTime="15"
+        buttonCir:progressWidth="5dp"
+        buttonCir:progressColor="@color/colorPrimaryDark" />
+
+</RelativeLayout>
